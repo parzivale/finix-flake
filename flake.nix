@@ -27,6 +27,16 @@
           ) (import "${inputs.finix}/tests" { inherit pkgs; });
         };
 
-      flake.lib = inputs.finix.lib;
+      flake.lib =
+        let
+          testLib = pkgs: import "${inputs.finix}/tests/lib" { inherit pkgs; lib = pkgs.lib; };
+        in
+        inputs.finix.lib // {
+          test = {
+            mkTest =
+              { pkgs, ... }@args:
+              (testLib pkgs).mkTest (builtins.removeAttrs args [ "pkgs" ]);
+          };
+        };
     };
 }

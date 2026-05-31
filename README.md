@@ -11,13 +11,43 @@ A Nix flake that pins [finix-community/finix](https://github.com/finix-community
   inputs.finix-flake.url = "github:parzivale/finix-flake";
 
   outputs = { finix-flake, ... }: {
-    # Access finix lib
-    # finix-flake.lib
+    # finix-flake.lib.finixSystem
+    # finix-flake.lib.mkTest
   };
 }
 ```
 
-### Run tests
+### `lib.finixSystem`
+
+Evaluate a finix system configuration:
+
+```nix
+finix-flake.lib.finixSystem {
+  inherit lib;
+  modules = [ ./configuration.nix ];
+}
+```
+
+### `lib.mkTest`
+
+Create a VM-based test using the finix test driver:
+
+```nix
+finix-flake.lib.mkTest {
+  inherit pkgs;
+  name = "my-test";
+  nodes = {
+    machine = { ... }: { /* finix node config */ };
+  };
+  testScript = ''
+    machine.wait_for_service("myservice")
+  '';
+}
+```
+
+The test driver exposes a `FinitMachine` class with finit-specific methods (`wait_for_service`, `wait_for_condition`, `initctl`, etc.) in place of systemd equivalents.
+
+### Run upstream tests
 
 ```sh
 nix flake check

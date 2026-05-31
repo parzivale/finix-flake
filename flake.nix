@@ -32,11 +32,9 @@
           testLib = pkgs: import "${inputs.finix}/tests/lib" { inherit pkgs; lib = pkgs.lib; };
         in
         inputs.finix.lib // {
-          test = {
-            mkTest =
-              { pkgs, ... }@args:
-              (testLib pkgs).mkTest (builtins.removeAttrs args [ "pkgs" ]);
-          };
+          mkTest =
+            { pkgs, ... }@args:
+            (testLib pkgs).mkTest (builtins.removeAttrs args [ "pkgs" ]);
         };
     };
 }

@@ -16,9 +16,15 @@
       ];
 
       perSystem =
-        { pkgs, ... }:
+        { pkgs, lib, ... }:
         {
-          checks = import "${inputs.finix}/tests" { inherit pkgs; };
+          checks = lib.concatMapAttrs (
+            name: value:
+            if lib.isDerivation value then
+              { ${name} = value; }
+            else
+              lib.filterAttrs (_: lib.isDerivation) value
+          ) (import "${inputs.finix}/tests" { inherit pkgs; });
         };
 
       flake.lib = inputs.finix.lib;

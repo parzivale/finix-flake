@@ -42,11 +42,13 @@
         // {
           mkTest = {pkgs, ...} @ args:
             (testLib pkgs).mkTest (builtins.removeAttrs args ["pkgs"]);
-          finixSystem = {self, modules ? [], specialArgs ? {}}: {
+          finixSystem = {self, modules ? [], specialArgs ? {}}: let
+            finixModules = inputs.finix.nixosModules;
+          in {
             config = lib.evalModules {
               class = "finix";
-              specialArgs = lib.recursiveUpdate {modules = self.finixModules;} specialArgs;
-              modules = [self.finixModules.default] ++ modules;
+              specialArgs = lib.recursiveUpdate {modules = finixModules;} specialArgs;
+              modules = [finixModules.default] ++ modules;
             };
           };
         };

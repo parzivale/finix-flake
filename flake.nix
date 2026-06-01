@@ -37,7 +37,7 @@
             lib = pkgs.lib;
           };
         lib = inputs.nixpkgs.lib;
-        finixSystem = {self, modules ? [], specialArgs ? {}}: let
+        finixSystem = {modules ? [], specialArgs ? {}}: let
           finixModules = inputs.finix.nixosModules;
         in {
           config = lib.evalModules {
@@ -50,7 +50,7 @@
         inputs.finix.lib
         // {
           inherit finixSystem;
-          mkTest = {pkgs, self, name, nodes, testScript, extraDriverArgs ? [], ...}:
+          mkTest = {pkgs, name, nodes, testScript, extraDriverArgs ? [], ...}:
             let
               qemuSerialDevice =
                 if pkgs.stdenv.hostPlatform.isx86 then "ttyS0"
@@ -59,7 +59,6 @@
 
               mkVmNode = allNodes: nodeName: nodeConfig:
                 (finixSystem {
-                  inherit self;
                   modules = [
                     "${inputs.finix}/tests/lib/testing.nix"
                     "${inputs.finix}/modules/virtualisation/qemu.nix"

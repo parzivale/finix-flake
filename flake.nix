@@ -28,7 +28,7 @@
         ) (import "${inputs.finix}/tests" {inherit pkgs;});
       };
 
-      flake.finixModules = inputs.finix-community-modules.nixosModules;
+      flake.finixModules = inputs.finix-community-modules.nixosModules // inputs.finix.nixosModules;
 
       flake.lib = let
         testLib = pkgs:
@@ -38,6 +38,7 @@
           };
         lib = inputs.nixpkgs.lib;
         finixSystem = {
+          lib ? null,
           modules ? [],
           specialArgs ? {},
         }: let

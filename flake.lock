@@ -15,6 +15,21 @@
         "type": "github"
       }
     },
+    "finix-community-modules": {
+      "locked": {
+        "lastModified": 1780082353,
+        "narHash": "sha256-4oj5vGnopoC9x8DRRfjtiqxfTEfYuqcNq2OzkgBf75Q=",
+        "owner": "finix-community",
+        "repo": "community-modules",
+        "rev": "8ba71a324b0689373873d197f2f025242bb1af44",
+        "type": "github"
+      },
+      "original": {
+        "owner": "finix-community",
+        "repo": "community-modules",
+        "type": "github"
+      }
+    },
     "flake-parts": {
       "inputs": {
         "nixpkgs-lib": "nixpkgs-lib"
@@ -67,6 +82,7 @@
     "root": {
       "inputs": {
         "finix": "finix",
+        "finix-community-modules": "finix-community-modules",
         "flake-parts": "flake-parts",
         "nixpkgs": "nixpkgs"
       }

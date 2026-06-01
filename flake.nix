@@ -33,12 +33,10 @@
       flake.lib = let
         testLib = pkgs:
           import "${inputs.finix}/tests/lib" {
-            inherit pkgs;
-            lib = pkgs.lib;
+            inherit pkgs lib;
           };
         lib = inputs.nixpkgs.lib;
         finixSystem = {
-          lib ? null,
           modules ? [],
           specialArgs ? {},
         }: let

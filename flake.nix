@@ -69,27 +69,26 @@
             then "ttyAMA0"
             else throw "unknown QEMU serial device for ${pkgs.stdenv.hostPlatform.system}";
 
-          mkVmNode = allNodes: nodeName: nodeConfig:
-            (finixSystem {
-              modules = [
-                "${inputs.finix}/tests/lib/testing.nix"
-                "${inputs.finix}/modules/virtualisation/qemu.nix"
-                nodeConfig
-                {
-                  nixpkgs.pkgs = pkgs;
-                  boot.kernelParams = ["console=${qemuSerialDevice},115200n8"];
-                  fileSystems."/" = {
-                    device = "tmpfs";
-                    fsType = "tmpfs";
-                    options = ["mode=755"];
-                  };
-                  networking.hostName = nodeName;
-                  testing.enable = true;
-                  virtualisation.qemu.package = pkgs.qemu_test;
-                }
-              ];
-              specialArgs = {nodes = allNodes;};
-            }).config;
+          mkVmNode = allNodes: nodeName: nodeConfig: (finixSystem {
+            modules = [
+              "${inputs.finix}/tests/lib/testing.nix"
+              "${inputs.finix}/modules/virtualisation/qemu.nix"
+              nodeConfig
+              {
+                nixpkgs.pkgs = pkgs;
+                boot.kernelParams = ["console=${qemuSerialDevice},115200n8"];
+                fileSystems."/" = {
+                  device = "tmpfs";
+                  fsType = "tmpfs";
+                  options = ["mode=755"];
+                };
+                networking.hostName = nodeName;
+                testing.enable = true;
+                virtualisation.qemu.package = pkgs.qemu_test;
+              }
+            ];
+            specialArgs = {nodes = allNodes;};
+          });
 
           evaluatedNodes = lib.mapAttrs (mkVmNode evaluatedNodes) nodes;
 

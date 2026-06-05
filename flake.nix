@@ -54,6 +54,45 @@
           };
       in {
         inherit finixSystem;
+        mkVm = {
+          pkgs,
+          name,
+          modules ? [],
+          headless ? false,
+          ...
+        }: let
+          qemuSerialDevice =
+            if pkgs.stdenv.hostPlatform.isx86
+            then "ttyS0"
+            else if pkgs.stdenv.hostPlatform.isAarch
+            then "ttyAMA0"
+            else throw "unknown QEMU serial device for ${pkgs.stdenv.hostPlatform.system}";
+
+          vmSystem = finixSystem {
+            modules =
+              [
+                "${inputs.finix}/modules/virtualisation/qemu.nix"
+                {
+                  nixpkgs.pkgs = pkgs;
+                  boot.kernelParams = ["console=${qemuSerialDevice},115200n8"];
+                  fileSystems."/" = {
+                    device = "tmpfs";
+                    fsType = "tmpfs";
+                    options = ["mode=755"];
+                  };
+                  networking.hostName = name;
+                }
+                (lib.mkIf headless {
+                  virtualisation.qemu.extraArgs = ["-nographic"];
+                  services.getty.ttys = lib.mkForce [qemuSerialDevice];
+                })
+              ]
+              ++ modules;
+          };
+        in
+          pkgs.writeShellScriptBin "run-${name}-vm" ''
+            exec ${lib.escapeShellArgs vmSystem.config.virtualisation.qemu.argv} "$@"
+          '';
         mkTest = {
           pkgs,
           name,

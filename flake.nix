@@ -72,6 +72,7 @@
             modules =
               [
                 "${inputs.finix}/modules/virtualisation/qemu.nix"
+                inputs.finix.nixosModules.getty
                 {
                   nixpkgs.pkgs = pkgs;
                   boot.kernelParams = ["console=${qemuSerialDevice},115200n8"];
